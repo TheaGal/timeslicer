@@ -1,6 +1,6 @@
 # Timeslicer ideas and/or checklist
 
-- [ ] Timeslicing
+- [x] Timeslicing
 - [x] Macro easies
     - No if-return clauses needed
 - [ ] Debugging
