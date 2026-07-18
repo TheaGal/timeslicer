@@ -1,6 +1,8 @@
 #include "timeslicer/performance_timer.h"
 
 #include <iostream>
+#include <map>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -30,16 +32,29 @@ void timeslicer::performance_report_init()
 
 void timeslicer::print_performance_report()
 {
+    // Sort into total time, descending.
+    std::map<int64_t, std::vector<std::string>> ordered_report_strs;
+
     for (auto const& [func_name, report] : g_per_func_perf_report_map)
     {
-        high_res_duration_t avg_dur{ 0 };
+        // Calc report statistics.
+        high_res_duration_t total_dur{ 0 };
         for (auto dur : report.duration_samples)
-            avg_dur += dur;
-        avg_dur /= report.duration_samples.size();
+            total_dur += dur;
+        high_res_duration_t avg_dur{ total_dur / report.duration_samples.size() };
 
-        std::cout << func_name << "()\tavg=" << avg_dur
-                  << ",\tsamples=" << report.duration_samples.size() << "\n";
+        // Form into report string.
+        std::ostringstream oss;
+        oss << func_name << "()\tavg=" << avg_dur << ",\tsamples=" << report.duration_samples.size()
+            << ",\ttotal=" << total_dur << "\n";
+
+        ordered_report_strs[-total_dur.count()].emplace_back(oss.str());
     }
+
+    // Print.
+    for (auto const& [_, report_strs] : ordered_report_strs)
+    for (auto const& report_str : report_strs)
+        std::cout << report_str;
 }
 
 namespace timeslicer
