@@ -1,7 +1,7 @@
 # Timeslicer ideas and/or checklist
 
 - [ ] Timeslicing
-- [ ] Macro easies
+- [x] Macro easies
     - No if-return clauses needed
 - [ ] Debugging
     - See how many executions per time slice
