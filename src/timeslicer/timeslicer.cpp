@@ -1,5 +1,7 @@
 #include "timeslicer/timeslicer.h"
 
+#include "timeslicer/performance_timer.h"
+
 #include <cstdint>
 #include <stdexcept>
 
@@ -18,6 +20,7 @@ namespace THEA
 void timeslicer::init()
 {
     g_tick_counter = 0;
+    performance_report_init();
 }
 
 void timeslicer::tick()

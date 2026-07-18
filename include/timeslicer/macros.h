@@ -1,5 +1,6 @@
 #pragma once
 
+#include "performance_timer.h"
 #include "timeslicer.h"
 
 
@@ -13,4 +14,7 @@
             sub_idx))                                                                              \
     {                                                                                              \
         return;                                                                                    \
-    }
+    }                                                                                              \
+    THEA::timeslicer::Performance_timer(__func__)
+
+#define TIMESLICER_PRINT_PERFORMANCE_REPORT THEA::timeslicer::print_performance_report()

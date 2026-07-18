@@ -1,7 +1,9 @@
 #include "timeslicer_public.h"
 
+#include <chrono>
 #include <cstdint>
 #include <iostream>
+#include <thread>
 
 
 void some_func()
@@ -45,5 +47,8 @@ int32_t main()
     }
 
     std::cout << "-=-=-=-=-=-=-=- FINISH -=-=-=-=-=-=-=-\n";
+
+    TIMESLICER_PRINT_PERFORMANCE_REPORT;
+
     return 0;
 }

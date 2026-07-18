@@ -148,8 +148,10 @@ endif()
 # Main source files.
 set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/macros.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/performance_timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/timeslicer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer_public.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/performance_timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/timeslicer.cpp
 )
 
@@ -208,6 +210,7 @@ if(IS_STANDALONE_PROJECT)
 
         # Resource files.
         ${ASSET_DIR_FILES}
+        include/timeslicer/performance_timer.h
     )
 else()
     add_library(${PROJECT_NAME}
@@ -254,5 +257,4 @@ if(IS_STANDALONE_PROJECT)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
-
 
