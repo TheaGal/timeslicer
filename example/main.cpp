@@ -1,9 +1,7 @@
 #include "timeslicer_public.h"
 
-#include <chrono>
 #include <cstdint>
 #include <iostream>
-#include <thread>
 
 
 void some_func()

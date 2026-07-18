@@ -5,7 +5,7 @@
     - No if-return clauses needed
 - [ ] Debugging
     - See how many executions per time slice
-    - See average timing of each service
+    - [x] See average timing of each service
     - See cumulative average timing of each time slice
         - See highs and lows of each cumulative timing of each time slice
 
