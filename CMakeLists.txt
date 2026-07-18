@@ -51,89 +51,89 @@ endif()
 set(DEPENDENCY_INCLUDE_DIRS
 )
 
-add_subdirectory(third_party/efsw)
-add_subdirectory(third_party/fastgltf)
-add_subdirectory(third_party/KTX-Software/lib ktx)
+# add_subdirectory(third_party/efsw)
+# add_subdirectory(third_party/fastgltf)
+# add_subdirectory(third_party/KTX-Software/lib ktx)
 
-if (NOT TARGET nlohmann_json::nlohmann_json)
-    add_subdirectory(third_party/stduuid)
-endif()
+# if (NOT TARGET nlohmann_json::nlohmann_json)
+#     add_subdirectory(third_party/stduuid)
+# endif()
 
-if (NOT TARGET nlohmann_json::nlohmann_json)
-  set(JSON_BuildTests OFF CACHE INTERNAL "")
-  add_subdirectory(third_party/json)
-endif()
+# if (NOT TARGET nlohmann_json::nlohmann_json)
+#   set(JSON_BuildTests OFF CACHE INTERNAL "")
+#   add_subdirectory(third_party/json)
+# endif()
 
 
 # Platform-specific dependencies.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows|Darwin|Linux")
-    message("GFX Lib: Vulkan 1.3")
-    set(GFX_LIB_DEFINITIONS
-        TXP_GFX_BACKEND_VULKAN=1
-    )
+    # message("GFX Lib: Vulkan 1.3")
+    # set(GFX_LIB_DEFINITIONS
+    #     TXP_GFX_BACKEND_VULKAN=1
+    # )
 
-    find_package(Vulkan REQUIRED)
-    add_subdirectory(third_party/glfw)
-    add_subdirectory(third_party/vk-bootstrap)
-    add_subdirectory(third_party/VulkanMemoryAllocator)
+    # find_package(Vulkan REQUIRED)
+    # add_subdirectory(third_party/glfw)
+    # add_subdirectory(third_party/vk-bootstrap)
+    # add_subdirectory(third_party/VulkanMemoryAllocator)
 
-    set(PLAT_SPECIFIC_INCLUDE_DIRS
-        ${Vulkan_INCLUDE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vk-bootstrap
-        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/VulkanMemoryAllocator/include
-    )
-    set(PLAT_SPECIFIC_LINK_LIBS
-        glfw
-        ${GLFW_LIBRARIES}
-        Vulkan::Vulkan
-        vk-bootstrap::vk-bootstrap
-        GPUOpen::VulkanMemoryAllocator
-    )
+    # set(PLAT_SPECIFIC_INCLUDE_DIRS
+    #     ${Vulkan_INCLUDE_DIR}
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw/include
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/vk-bootstrap
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/VulkanMemoryAllocator/include
+    # )
+    # set(PLAT_SPECIFIC_LINK_LIBS
+    #     glfw
+    #     ${GLFW_LIBRARIES}
+    #     Vulkan::Vulkan
+    #     vk-bootstrap::vk-bootstrap
+    #     GPUOpen::VulkanMemoryAllocator
+    # )
 else()
     message(FATAL_ERROR "GFX Lib not implemented yet!!")
 endif()
 
 
-# Use local ASSET_DIR if standalone.
-string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" TXP_RENDERER_STANDALONE)
+# Check if standalone project.
+string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}" IS_STANDALONE_PROJECT)
 
-if (TXP_RENDERER_STANDALONE)
-    message("TXP Renderer standalone mode! Using standalone asset directory.")
-    set(ASSET_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets)
-elseif(NOT DEFINED ASSET_DIR)
-    message(FATAL_ERROR "ASSET_DIR is not defined!!")
-endif()
+# if (IS_STANDALONE_PROJECT)
+#     message("TXP Renderer standalone mode! Using standalone asset directory.")
+#     set(ASSET_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets)
+# elseif(NOT DEFINED ASSET_DIR)
+#     message(FATAL_ERROR "ASSET_DIR is not defined!!")
+# endif()
 
-# Create symlink to assets folder.
-if(DEFINED ASSET_DIR)
-    set(dir_name ${ASSET_DIR})
-    set(target_dir_name ${CMAKE_BINARY_DIR}/assets)
-    if(WIN32)
-        string(REPLACE "/" "\\" win32_dir_name ${dir_name})
-        string(REPLACE "/" "\\" win32_target_dir_name ${target_dir_name})
-        if(EXISTS ${dir_name})
-            execute_process(
-                COMMAND cmd /C rmdir ${win32_target_dir_name}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-        endif()
-        execute_process(
-            COMMAND cmd /C mklink /J ${win32_target_dir_name} ${win32_dir_name}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    else()
-        # The way you create a symlink in every single OS except Windows.s
-        file(CREATE_LINK ${dir_name} ${target_dir_name} SYMBOLIC)
-    endif()
-endif()
+# # Create symlink to assets folder.
+# if(DEFINED ASSET_DIR)
+#     set(dir_name ${ASSET_DIR})
+#     set(target_dir_name ${CMAKE_BINARY_DIR}/assets)
+#     if(WIN32)
+#         string(REPLACE "/" "\\" win32_dir_name ${dir_name})
+#         string(REPLACE "/" "\\" win32_target_dir_name ${target_dir_name})
+#         if(EXISTS ${dir_name})
+#             execute_process(
+#                 COMMAND cmd /C rmdir ${win32_target_dir_name}
+#                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#         endif()
+#         execute_process(
+#             COMMAND cmd /C mklink /J ${win32_target_dir_name} ${win32_dir_name}
+#             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#     else()
+#         # The way you create a symlink in every single OS except Windows.s
+#         file(CREATE_LINK ${dir_name} ${target_dir_name} SYMBOLIC)
+#     endif()
+# endif()
 
 
-# Resource files inside ASSET_DIR.
-set(ASSET_DIR_FILES
+# # Resource files inside ASSET_DIR.
+# set(ASSET_DIR_FILES
 
-)
+# )
 
 # macOS: add all files in assets dir into app bundle package.
-if (TXP_RENDERER_STANDALONE)
+if (IS_STANDALONE_PROJECT)
     foreach (FILE ${ASSET_DIR_FILES})
         file(RELATIVE_PATH NEW_FILE "${ASSET_DIR}" ${FILE})
         get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
@@ -148,56 +148,63 @@ endif()
 # Main source files.
 set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/macros.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/timeticker.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/timeslicer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer_public.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/timeticker.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/timeslicer.cpp
 )
 
 # Support source files.
 set(SUPPORT_SOURCES
-    # Dear ImGui implementation source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_glfw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_glfw.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_vulkan.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_vulkan.h
+    # # Dear ImGui implementation source files.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_glfw.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_glfw.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_vulkan.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/backends/imgui_impl_vulkan.h
 
-    # Dear ImGui base source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imconfig.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_demo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_draw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_internal.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_tables.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_widgets.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_rectpack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_textedit.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_truetype.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/misc/cpp/imgui_stdlib.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/misc/cpp/imgui_stdlib.h
+    # # Dear ImGui base source files.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imconfig.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_demo.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_draw.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_internal.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_tables.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui_widgets.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imgui.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_rectpack.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_textedit.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/imstb_truetype.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/misc/cpp/imgui_stdlib.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui/misc/cpp/imgui_stdlib.h
 
-    # ImGuizmo source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.h
+    # # ImGuizmo source files.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.h
 
-    # stb header files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image_resize2.h
+    # # stb header files.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image_resize2.h
 
-    # Tinyobjloader source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.h
+    # # Tinyobjloader source files.
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.cc
+    # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.h
 )
 
-if(TXP_RENDERER_STANDALONE)
+# Example source files.
+set(EXAMPLE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/example/main.cpp
+)
+
+if(IS_STANDALONE_PROJECT)
     # Executable build.
     add_executable(${PROJECT_NAME}
         MACOSX_BUNDLE
 
         ${MAIN_SOURCES}
         ${SUPPORT_SOURCES}
+
+        ${EXAMPLE_SOURCES}
 
         # Resource files.
         ${ASSET_DIR_FILES}
@@ -214,18 +221,18 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib  # This is @TEMPORARY at least until bt_lib is made into its own library.
+        # ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib  # This is @TEMPORARY at least until bt_lib is made into its own library.
         ${DEPENDENCY_INCLUDE_DIRS}
         ${PLAT_SPECIFIC_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    efsw-static
-    fastgltf
-    ktx
-    stduuid
-    nlohmann_json::nlohmann_json
-    ${PLAT_SPECIFIC_LINK_LIBS}
+    # efsw-static
+    # fastgltf
+    # ktx
+    # stduuid
+    # nlohmann_json::nlohmann_json
+    # ${PLAT_SPECIFIC_LINK_LIBS}
 )
 
 
@@ -234,9 +241,9 @@ target_compile_definitions(${PROJECT_NAME}
         ${GFX_LIB_DEFINITIONS}
 )
 
-if(TXP_RENDERER_STANDALONE)
+if(IS_STANDALONE_PROJECT)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE_GUI_IDENTIFIER "com.hawsoo.txp_renderer"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.hawsoo.timeslicer"
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1.0"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
@@ -247,3 +254,5 @@ if(TXP_RENDERER_STANDALONE)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
+
+

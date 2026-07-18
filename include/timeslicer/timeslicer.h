@@ -11,7 +11,7 @@ namespace timeslicer
 void init();
 void tick();
 
-enum class Slice_pattern
+enum class Slice_pattern : uint8_t
 {
     ONES = 0,
     TWOS,
