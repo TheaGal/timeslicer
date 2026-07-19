@@ -1,6 +1,8 @@
 #include "timeslicer/performance_timer.h"
 
+#include <algorithm>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <sstream>
 #include <unordered_map>
@@ -37,15 +39,39 @@ void timeslicer::print_performance_report()
 
     for (auto const& [func_name, report] : g_per_func_perf_report_map)
     {
-        // Calc report statistics.
+        // Calc avg duration.
         high_res_duration_t total_dur{ 0 };
         for (auto dur : report.duration_samples)
             total_dur += dur;
         high_res_duration_t avg_dur{ total_dur / report.duration_samples.size() };
 
+        // Find 1% lowest/highest samples.
+        high_res_duration_t one_perc_low_dur{ 0 };
+        high_res_duration_t one_perc_high_dur{ 0 };
+        {
+            size_t one_perc_num_samples = std::ceil(report.duration_samples.size() / 100.0f);
+
+            std::vector<int64_t> duration_samples_as_i64;
+            duration_samples_as_i64.reserve(report.duration_samples.size());
+            for (auto dur : report.duration_samples)
+                duration_samples_as_i64.emplace_back(dur.count());
+            std::sort(duration_samples_as_i64.begin(), duration_samples_as_i64.end());
+
+            for (size_t i = 0; i < one_perc_num_samples; i++)
+            {
+                one_perc_low_dur += high_res_duration_t(duration_samples_as_i64[i]);
+                one_perc_high_dur += high_res_duration_t(
+                    duration_samples_as_i64[duration_samples_as_i64.size() - 1 - i]);
+            }
+
+            one_perc_low_dur /= one_perc_num_samples;
+            one_perc_high_dur /= one_perc_num_samples;
+        }
+
         // Form into report string.
         std::ostringstream oss;
-        oss << func_name << "()\tavg=" << avg_dur << ",\tsamples=" << report.duration_samples.size()
+        oss << func_name << "()\tavg=" << avg_dur << ",\t1%low=" << one_perc_low_dur
+            << ",\t1%high=" << one_perc_high_dur << ",\tsamples=" << report.duration_samples.size()
             << ",\ttotal=" << total_dur << "\n";
 
         ordered_report_strs[-total_dur.count()].emplace_back(oss.str());
