@@ -4,7 +4,7 @@
 - [x] Macro easies
     - No if-return clauses needed
 - [ ] Debugging
-    - See how many executions per time slice
+    - [x] See how many executions per time slice
     - [x] See average timing of each service
     - See cumulative average timing of each time slice
         - See highs and lows of each cumulative timing of each time slice

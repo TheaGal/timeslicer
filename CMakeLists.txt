@@ -153,6 +153,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer/timeslicer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/timeslicer_public.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/performance_timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/timeslice_pattern.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timeslicer/timeslicer.cpp
 )
 

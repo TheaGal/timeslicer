@@ -23,6 +23,7 @@ enum class Slice_pattern : uint8_t
 };
 
 bool eval_tick_valid_timeslice(Slice_pattern slice_pattern, uint8_t sub_idx);
+bool eval_tick_valid_timeslice_at_tick(Slice_pattern slice_pattern, uint8_t sub_idx, uint8_t tick);
 
 } // namespace timeslicer
 } // namespace THEA

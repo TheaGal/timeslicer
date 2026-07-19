@@ -14,10 +14,11 @@
 
 #define TIMESLICER_SCOPED(slice_pattern, sub_idx)                                                  \
     static std::once_flag __timeslicer_scoped_call_once_flag;                                      \
-    std::call_once(__timeslicer_scoped_call_once_flag, []() {                                      \
-        THEA::timeslicer::log_timeslice_pattern(__func__,                                          \
-                                                THEA::timeslicer::Slice_pattern::slice_pattern);   \
-    });                                                                                            \
+    std::call_once(__timeslicer_scoped_call_once_flag,                                             \
+                   THEA::timeslicer::log_timeslice_pattern,                                        \
+                   __func__,                                                                       \
+                   THEA::timeslicer::Slice_pattern::slice_pattern,                                 \
+                   sub_idx);                                                                       \
                                                                                                    \
     if (!THEA::timeslicer::eval_tick_valid_timeslice(                                              \
             THEA::timeslicer::Slice_pattern::slice_pattern,                                        \
@@ -30,3 +31,5 @@
 
 
 #define TIMESLICER_PRINT_PERFORMANCE_REPORT THEA::timeslicer::print_performance_report()
+
+#define TIMESLICER_PRINT_TIMESLICE_PATTERN_REPORT THEA::timeslicer::print_timeslice_pattern_report()

@@ -47,6 +47,7 @@ int32_t main()
     std::cout << "-=-=-=-=-=-=-=- FINISH -=-=-=-=-=-=-=-\n";
 
     TIMESLICER_PRINT_PERFORMANCE_REPORT;
+    TIMESLICER_PRINT_TIMESLICE_PATTERN_REPORT;
 
     return 0;
 }
