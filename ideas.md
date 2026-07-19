@@ -3,7 +3,7 @@
 - [x] Timeslicing
 - [x] Macro easies
     - No if-return clauses needed
-- [ ] Debugging
+- [x] Debugging
     - [x] See how many executions per time slice
     - [x] See average timing of each service
     - [x] See cumulative average timing of each time slice
